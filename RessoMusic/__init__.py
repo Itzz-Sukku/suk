@@ -1,4 +1,4 @@
-from RessoMusic.core.bot import AMBOTOP
+from RessoMusic.core.bot import AMBOT
 from RessoMusic.core.dir import dirr
 from RessoMusic.core.git import git
 from RessoMusic.core.userbot import Userbot
@@ -11,7 +11,7 @@ git()
 dbb()
 heroku()
 
-app = AMBOTOP()
+app = AMBOT()
 userbot = Userbot()
 
 
