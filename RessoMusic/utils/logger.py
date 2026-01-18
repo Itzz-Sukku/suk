@@ -56,3 +56,11 @@ async def play_logs(message, streamtype):
             except:
                 pass
         return
+
+# --- Compatibility helper for old code ---
+
+async def send_large_error(*args, **kwargs):
+    """
+    Dummy async logger to keep old plugins compatible
+    """
+    return
