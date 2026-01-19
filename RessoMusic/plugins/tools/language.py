@@ -1,6 +1,5 @@
-from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 from pyrogram import filters
-from pyrogram.types import InlineKeyboardButton, Message
+from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton, Message
 
 from RessoMusic import app
 from RessoMusic.utils.database import get_lang, set_lang
@@ -10,26 +9,37 @@ from strings import get_string, languages_present
 
 
 def lanuages_keyboard(_):
-    keyboard = InlineKeyboard(row_width=2)
-    keyboard.add(
-        *[
-            (
-                InlineKeyboardButton(
-                    text=languages_present[i],
-                    callback_data=f"languages:{i}",
-                )
+    buttons = []
+
+    row = []
+    for i in languages_present:
+        row.append(
+            InlineKeyboardButton(
+                text=languages_present[i],
+                callback_data=f"languages:{i}",
             )
-            for i in languages_present
+        )
+        if len(row) == 2:
+            buttons.append(row)
+            row = []
+
+    if row:
+        buttons.append(row)
+
+    buttons.append(
+        [
+            InlineKeyboardButton(
+                text=_["BACK_BUTTON"],
+                callback_data="settingsback_helper",
+            ),
+            InlineKeyboardButton(
+                text=_["CLOSE_BUTTON"],
+                callback_data="close",
+            ),
         ]
     )
-    keyboard.row(
-        InlineKeyboardButton(
-            text=_["BACK_BUTTON"],
-            callback_data=f"settingsback_helper",
-        ),
-        InlineKeyboardButton(text=_["CLOSE_BUTTON"], callback_data=f"close"),
-    )
-    return keyboard
+
+    return InlineKeyboardMarkup(buttons)
 
 
 @app.on_message(filters.command(["lang", "setlang", "language"]) & ~BANNED_USERS)
@@ -50,16 +60,18 @@ async def lanuagecb(client, CallbackQuery, _):
     except:
         pass
     keyboard = lanuages_keyboard(_)
-    return await CallbackQuery.edit_message_reply_markup(reply_markup=keyboard)
+    await CallbackQuery.edit_message_reply_markup(reply_markup=keyboard)
 
 
 @app.on_callback_query(filters.regex(r"languages:(.*?)") & ~BANNED_USERS)
 @ActualAdminCB
 async def language_markup(client, CallbackQuery, _):
-    langauge = (CallbackQuery.data).split(":")[1]
+    langauge = CallbackQuery.data.split(":")[1]
     old = await get_lang(CallbackQuery.message.chat.id)
+
     if str(old) == str(langauge):
         return await CallbackQuery.answer(_["lang_4"], show_alert=True)
+
     try:
         _ = get_string(langauge)
         await CallbackQuery.answer(_["lang_2"], show_alert=True)
@@ -69,6 +81,7 @@ async def language_markup(client, CallbackQuery, _):
             _["lang_3"],
             show_alert=True,
         )
+
     await set_lang(CallbackQuery.message.chat.id, langauge)
     keyboard = lanuages_keyboard(_)
-    return await CallbackQuery.edit_message_reply_markup(reply_markup=keyboard)
+    await CallbackQuery.edit_message_reply_markup(reply_markup=keyboard)
