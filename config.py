@@ -26,8 +26,11 @@ LOG_GROUP_ID = -1002136457746         # apna Telegram group ID yahan dal sakte h
 # Get this value from @MissRose_Bot on Telegram by /id
 OWNER_ID = int(getenv("OWNER_ID","6391774843"))
 
-API_URL = getenv("API_URL", 'https://api.thequickearn.xyz') #youtube song url
-API_KEY = getenv("API_KEY", 'NxGBNexGenBotsc75140') # youtube song api ke # -------------------------------------------------------------------------#
+# ---------------------------------------------------------
+BASE_URL = getenv("BASE_URL", "https://babyapi.pro")
+API_KEY = getenv("API_KEY", None)
+# ---------------------------------------------------------
+
 
 ## Fill these variables if you're deploying on heroku.
 # Your heroku app name
